@@ -1,18 +1,58 @@
 const router = require('express').Router();
+const sequelize = require("../../config/connection");
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+router.get('/', async (req, res) => {
+  try {
+    const productData = await Product.findAll({
+      attributes: [['id', 'ProductId'], ['product_name', 'Product'], ['price', 'Price'], ['stock', 'Stock'], ['category_id', 'CategoryId']],
+      include: [
+        {
+          model: Category,
+          attributes: [['id', 'CategoryId'], ['category_name', 'Category']],
+        },
+        {
+          model: Tag,
+          attributes: [['id', 'TagId'], ['tag_name', 'Tag']],
+        }
+      ]
+    })
+  
+    res.status(200).json(productData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // get one product
-router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+router.get('/:id', async (req, res) => {
+  try {
+    const productData = await Product.findByPk(req.params.id, {
+      attributes: [['id', 'ProductId'], ['product_name', 'Product'], ['price', 'Price'], ['stock', 'Stock'], ['category_id', 'CategoryId']],
+      include: [
+        {
+          model: Category,
+          attributes: [['id', 'CategoryId'], ['category_name', 'Category']],
+        },
+        {
+          model: Tag,
+          attributes: [['id', 'TagId'], ['tag_name', 'Tag']],
+        }
+      ]
+    })
+    if (!productData) {
+      res.status(404).json({ message: "No products with this id!" });
+      return;
+    }
+    else {
+      res.status(200).json(productData);
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // create new product
@@ -90,7 +130,22 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then(dbProductData => {
+      if (!dbProductData) {
+        res.json(404).json({ message: 'No product found with that id.' });
+        return;
+      }
+      res.json(dbProductData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
