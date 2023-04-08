@@ -3,7 +3,7 @@ const sequelize = require("../../config/connection");
 const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
-
+// endpoint => http://localhost:3001/api/categories/
 router.get('/', async (req, res) => {
   try {
     const categoryData = await Category.findAll({
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+// another endpoint => http://localhost:3001/api/categories/1 (1 is the :id value - points to line 24 req.params.id)
 router.get('/:id', async (req, res) => {
   try {
     const categoryData = await Category.findByPk(req.params.id, {
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+// another endpoint but for Create => http://localhost:3001/api/categories/ => req.body
 router.post('/', async (req, res) => {
   try {
     const newCategory = await Category.create({ category_name: req.body.category_name });
@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
     res.status(400).json(err);
   }
 });
-
+// another enpoint for update http://localhost:3001/api/categories/1 (req.body and category_name together)
 router.put('/:id', async (req, res) => {
   try {
     const updatedCategory = await Category.update(
@@ -65,6 +65,7 @@ router.put('/:id', async (req, res) => {
         category_name: req.body.category_name,
       },
       {
+        //lookup on id to update field associated with id
         where: {
           id: req.params.id
         },
@@ -84,7 +85,7 @@ router.put('/:id', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+// another endpoint for delete http://localhost:30001/api/categories/1 
 router.delete('/:id', async (req, res) => {
   try {
     const deletedCategory = await Category.destroy({ where: { id: req.params.id } });
