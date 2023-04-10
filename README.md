@@ -16,8 +16,8 @@ git clone the repository, then run npm i to install dependencies.
 Run 'npm run seed', then 'npm start'.
 ### Contribution
 Bryan Pike
-### Deployed Link
-N/A
+### Video Demo Link
+video tutorial: https://drive.google.com/file/d/1K66g0GEvaxJRkKn-1D0tQZLWxpKoI8Be/view 
 ### Tests
 N/A
 ### Contact
